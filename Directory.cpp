@@ -1,10 +1,11 @@
 #include <iostream>
 #include <vector>
+#include <variant>
 #include "headers/Directory.h"
 
 using namespace std;
 
-Directory::Directory(string name, string size, string path, vector<File> files) : FSItem(name, size, path){
+Directory::Directory(string name, string size, string path, vector<FSItem*>) : FSItem(name, size, path){
 	this->files = files;
 }
 
@@ -18,6 +19,6 @@ ostream& operator<<(std::ostream& os, const Directory& item) {
 }
 
 int Directory::del(void){
-	cout << "Deleted" << endl;
+	cout << "Deleted directory." << endl;
 	return 0;
 }

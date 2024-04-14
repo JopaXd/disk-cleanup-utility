@@ -17,6 +17,6 @@ ostream& operator<<(std::ostream& os, const File& item) {
 }
 
 int File::del(void){
-	cout << "Deleted" << endl;
+	cout << "Deleted file" << endl;
 	return 0;
 }

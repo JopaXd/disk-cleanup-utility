@@ -1,7 +1,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <limits>
+#include "headers/Directory.h"
 #include "headers/File.h"
+#include "headers/FSItem.h"
 
 using namespace std;
 
@@ -18,10 +20,18 @@ int main() {
 	while (true){
 		cin >> choice;
 		if (choice == 1) {
+			string path;
 			File f("test", "test", "test");
-			f.print();
-			cout << f << endl;
-			cout << "scan" << endl;
+			File f1("test", "test", "test");
+			Directory d1("test", "test", "test");
+			vector<FSItem*> fs;
+			fs.push_back(&f);
+			fs.push_back(&f1);
+			fs.push_back(&d1);
+			for (auto i : fs) {
+				i->del();
+			}
+			cout << "Enter the path: (/ for root, this might take a considerable amount of time.)" << endl;
 		}
 		else if (choice == 2) {
 			cout << "Empty recycle bin" << endl;
