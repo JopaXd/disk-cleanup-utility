@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <limits>
+#include <filesystem>
 #include "headers/Directory.h"
 #include "headers/File.h"
 #include "headers/FSItem.h"
@@ -13,6 +14,7 @@
 using namespace std;
 
 void clear(void);
+void delete_dir_content(const filesystem::path& dir);
 
 int main() {
 	int choice;
@@ -41,6 +43,7 @@ int main() {
 			cout << "Enter the path: (/ for root, this might take a considerable amount of time.)" << endl;
 		}
 		else if (choice == 2) {
+			delete_dir_content(BIN_PATH);
 			cout << "Empty recycle bin" << endl;
 		}
 		else if (choice == 3) {
@@ -66,4 +69,10 @@ void clear(){
 	#else
 	system("clear");
 	#endif
+}
+
+void delete_dir_content(const filesystem::path& dir){
+	for (const auto& entry: filesystem::directory_iterator(dir)) {
+		filesystem::remove_all(entry.path());
+	}
 }
