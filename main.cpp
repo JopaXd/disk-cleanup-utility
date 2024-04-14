@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <limits>
+#include "headers/File.h"
 
 using namespace std;
 
@@ -13,10 +14,13 @@ int main() {
 	cout << "1. Scan a directory." << endl;
 	cout << "2. Empty recycle bin." << endl;
 	cout << "3. Delete temp data." << endl;
-	cout << "0. Exit" << endl;
+	cout << "4. Exit" << endl;
 	while (true){
 		cin >> choice;
 		if (choice == 1) {
+			File f("test", "test", "test");
+			f.print();
+			cout << f << endl;
 			cout << "scan" << endl;
 		}
 		else if (choice == 2) {
@@ -25,9 +29,9 @@ int main() {
 		else if (choice == 3) {
 			cout << "Empty temp folder" << endl;
 		}
-		else if (choice == 0) {
-			return 0;
+		else if (choice == 4) {
 			cout << "Goodbye!" << endl;
+			break;
 		}
 		else {
 			//Clear the input buffer so that the programd oes not go into an infinite loop.
