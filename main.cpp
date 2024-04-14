@@ -22,7 +22,7 @@ int main() {
 	int choice;
 	clear();
 	cout << "*** FS CleanUp Utility***" << endl;
-	cout << "1. Scan a directory." << endl;
+	cout << "1. Scan a directory. (requires root depending on the task)" << endl;
 	cout << "2. Empty recycle bin." << endl;
 	cout << "3. Delete app cache." << endl;
 	cout << "4. Delete app logs. (requires root)" << endl;
@@ -59,6 +59,9 @@ int main() {
 			cout << "Empty temp folder" << endl;
 		}
 		else if (choice == 4) {
+			cout << "Empty app logs." << endl;
+		}
+		else if (choice == 5) {
 			cout << "Goodbye!" << endl;
 			break;
 		}
