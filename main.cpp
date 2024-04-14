@@ -5,6 +5,8 @@
 #include "headers/File.h"
 #include "headers/FSItem.h"
 
+#define BIN_PATH = " ~/.local/share/Trash/"
+
 using namespace std;
 
 void clear(void);
