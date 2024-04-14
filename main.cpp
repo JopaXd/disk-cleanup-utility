@@ -5,7 +5,10 @@
 #include "headers/File.h"
 #include "headers/FSItem.h"
 
-#define BIN_PATH = " ~/.local/share/Trash/"
+#define BIN_PATH = " ~/.local/share/Trash/";
+#define APP_CACHE_PATH = "~/.cache/";
+#define APP_LOGS = "/var/log";
+// #define APT_CACHE = "/var/cache/apt/archives";
 
 using namespace std;
 
@@ -17,10 +20,12 @@ int main() {
 	cout << "*** FS CleanUp Utility***" << endl;
 	cout << "1. Scan a directory." << endl;
 	cout << "2. Empty recycle bin." << endl;
-	cout << "3. Delete temp data." << endl;
-	cout << "4. Exit" << endl;
+	cout << "3. Delete app cache." << endl;
+	cout << "4. Delete app logs." << endl;
+	cout << "5. Exit" << endl;
 	while (true){
 		cin >> choice;
+		//When something that is not a number is entered, it returns 0.
 		if (choice == 1) {
 			string path;
 			File f("test", "test", "test");
