@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 #include "headers/File.h"
 
 using namespace std;
@@ -17,8 +18,13 @@ ostream& operator<<(std::ostream& os, const File& item) {
 }
 
 int File::del(void){
-	cout << "Deleted file" << endl;
-	return 0;
+	try{
+		filesystem::remove(this->path);
+		return 0;
+	}
+	catch (filesystem::filesystem_error &exc) {
+		return 1;
+	}
 }
 
 string File::type(void){

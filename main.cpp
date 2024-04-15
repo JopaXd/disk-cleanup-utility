@@ -153,7 +153,19 @@ int main() {
 							cin >> operation;
 							clear_input_buffer();
 							if (operation == 1) {
-								chosenItem->del();
+								int success = chosenItem->del();
+								if (success == 0) {
+									cout << endl;
+									cout << "----------------" << endl;
+									cout << "File deleted successfully!" << endl;
+									cout << "----------------" << endl;
+								}
+								else{
+									cout << endl;
+									cout << "----------------" << endl;
+									cout << "Error deleting file!" << endl;
+									cout << "----------------" << endl;
+								}
 								break;
 							}
 							else if (operation == 2) {
@@ -173,7 +185,20 @@ int main() {
 						while(true){
 							cin >> operation;
 							if (operation == 1) {
-								chosenItem->del();
+								int success = chosenItem->del();
+								if (success == 0) {
+									cout << endl;
+									cout << "----------------" << endl;
+									cout << "Folder deleted successfully!" << endl;
+									cout << "----------------" << endl;
+								}
+								else{
+									cout << endl;
+									cout << "----------------" << endl;
+									cout << "Error deleting folder!" << endl;
+									cout << "----------------" << endl;
+								}
+								break;
 							}
 							else if (operation == 2) {
 								nextDirPath = chosenItem->getPath();

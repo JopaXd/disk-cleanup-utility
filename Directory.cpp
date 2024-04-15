@@ -2,6 +2,7 @@
 #include <vector>
 #include <variant>
 #include <memory>
+#include <filesystem>
 #include "headers/Directory.h"
 
 using namespace std;
@@ -19,8 +20,13 @@ ostream& operator<<(std::ostream& os, const Directory& item) {
 }
 
 int Directory::del(void){
-	cout << "Deleted directory." << endl;
-	return 0;
+	try{
+		filesystem::remove_all(this->path);
+		return 0;
+	}
+	catch (filesystem::filesystem_error &exc) {
+		return 1;
+	}
 }
 
 void Directory::setContents(vector<unique_ptr<FSItem>> newContents) {
