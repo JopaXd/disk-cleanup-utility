@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <string>
 #include <memory>
+#include <algorithm>
 #include "headers/Directory.h"
 #include "headers/File.h"
 #include "headers/FSItem.h"
@@ -19,6 +20,7 @@ using namespace std;
 void clear(void);
 void delete_dir_content(const filesystem::path& dir);
 uintmax_t directory_size(string path);
+void clear_input_buffer();
 
 int main() {
 	int choice;
@@ -54,12 +56,10 @@ int main() {
 			vector<unique_ptr<FSItem>> fs;
 			for (const auto & entry: filesystem::directory_iterator(path)) {
 				if (filesystem::is_directory(entry)){
-					//This will be calculated later.
+					//TODO: Use threading to improve the speed.
 					cout << entry.path().filename().string() << " " << entry.path() << endl;
 					uintmax_t s = directory_size(entry.path());
 					fs.push_back(make_unique<Directory>(entry.path().filename().string(), entry.path(), s));
-					// cout << entry.path() << " " << s << endl;
-
 				}
 				else{
 					cout << entry.path().filename().string() <<  " " << entry.path() << endl;
@@ -67,10 +67,35 @@ int main() {
 				}
 			}
 			currentDir.setContents(move(fs));
-			// vector<unique_ptr<FSItem>>& test = currentDir.getContents();
-			for (auto& i : currentDir.getContents()) {
-				i->print();
-				i->del();
+			int index = 0;
+			int scanChoice;
+			while(true){
+				for (auto& i : currentDir.getContents()) {
+					cout << index << " ";
+					i->print();
+					index++;
+				}
+				cout << endl << endl << endl;
+				cout << "1. Sort by size (ascending)" << endl;
+				cout << "2. Sort by size (descending)" << endl;
+				cout << "3. Select an item." << endl;
+				cout << "4. Wipe folder." << endl;
+				cout << "5. Back." << endl;
+				cin >> scanChoice;
+				vector<unique_ptr<FSItem>>& dirContents = currentDir.getContents();
+				if (scanChoice == 1) {
+					sort(dirContents.begin(), dirContents.end(), [](unique_ptr<FSItem>& a, unique_ptr<FSItem>& b){ return a->getSize() < b->getSize(); });
+					clear();
+				}
+				else if (scanChoice == 2) {
+					sort(dirContents.begin(), dirContents.end(), [](unique_ptr<FSItem>& a, unique_ptr<FSItem>& b){ return a->getSize() > b->getSize(); });
+					clear();
+				}
+				else {
+					//Clear the input buffer so that the programd oes not go into an infinite loop.
+					clear_input_buffer();
+					continue;
+				}
 			}
 		}
 		else if (choice == 2) {
@@ -89,9 +114,7 @@ int main() {
 		}
 		else {
 			//Clear the input buffer so that the programd oes not go into an infinite loop.
-			std::cin.clear();
-		    std::cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Please select a valid option." << endl;
+			clear_input_buffer();
 		}
 	}
 	return 0;
@@ -128,4 +151,11 @@ uintmax_t directory_size(string path) {
         }
     }
     return size;
+}
+
+void clear_input_buffer() {
+	//Clear the input buffer so that the programd oes not go into an infinite loop.
+	std::cin.clear();
+    std::cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	cout << "Please select a valid option." << endl;
 }
