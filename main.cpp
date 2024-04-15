@@ -24,14 +24,15 @@ void clear_input_buffer();
 
 int main() {
 	int choice;
-	clear();
-	cout << "*** FS CleanUp Utility***" << endl;
-	cout << "1. Scan a directory. (requires root depending on the task)" << endl;
-	cout << "2. Empty recycle bin." << endl;
-	cout << "3. Delete app cache." << endl;
-	cout << "4. Delete app logs. (requires root)" << endl;
-	cout << "5. Exit" << endl;
 	while (true){
+		clear();
+		cout << "*** FS CleanUp Utility***" << endl;
+		cout << "1. Scan a directory. (requires root depending on the task)" << endl;
+		cout << "2. Empty recycle bin." << endl;
+		cout << "3. Delete app cache." << endl;
+		cout << "4. Delete app logs. (requires root)" << endl;
+		cout << "5. Exit" << endl;
+		clear_input_buffer();
 		cin >> choice;
 		//When something that is not a number is entered, it returns 0.
 		if (choice == 1) {
@@ -76,6 +77,8 @@ int main() {
 					index++;
 				}
 				cout << endl << endl << endl;
+				cout << "Contents of:" << currentDir.getPath() << endl;
+				cout << endl << endl << endl;
 				cout << "1. Sort by size (ascending)" << endl;
 				cout << "2. Sort by size (descending)" << endl;
 				cout << "3. Select an item." << endl;
@@ -91,9 +94,11 @@ int main() {
 					sort(dirContents.begin(), dirContents.end(), [](unique_ptr<FSItem>& a, unique_ptr<FSItem>& b){ return a->getSize() > b->getSize(); });
 					clear();
 				}
+				else if (scanChoice == 5) {
+					break;
+				}
 				else {
 					//Clear the input buffer so that the programd oes not go into an infinite loop.
-					clear_input_buffer();
 					continue;
 				}
 			}
