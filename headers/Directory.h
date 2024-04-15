@@ -16,6 +16,7 @@ public:
 	void print(void);
 	friend std::ostream& operator<<(std::ostream& os, const Directory& item);
 	void setContents(vector<unique_ptr<FSItem>> newContents);
+	string type(void);
 	vector<unique_ptr<FSItem>>& getContents();
 	Directory(string name, string path, uintmax_t size, vector<unique_ptr<FSItem>> contents = vector<unique_ptr<FSItem>>());
 };

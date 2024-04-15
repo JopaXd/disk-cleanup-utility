@@ -22,5 +22,6 @@ public:
 	void setPath(string path);
 	void setSize(uintmax_t size);
 	void setName(string name);
+	virtual string type(void);
 
 };

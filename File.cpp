@@ -20,3 +20,7 @@ int File::del(void){
 	cout << "Deleted file" << endl;
 	return 0;
 }
+
+string File::type(void){
+	return "file";
+}

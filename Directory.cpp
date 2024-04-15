@@ -30,3 +30,7 @@ void Directory::setContents(vector<unique_ptr<FSItem>> newContents) {
 vector<unique_ptr<FSItem>>& Directory::getContents() {
 	return this->contents;
 }
+
+string Directory::type(void){
+	return "dir";
+}

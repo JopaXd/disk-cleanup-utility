@@ -23,69 +23,101 @@ uintmax_t directory_size(string path);
 void clear_input_buffer();
 
 int main() {
+	clear();
 	int choice;
 	while (true){
-		clear();
 		cout << "*** FS CleanUp Utility***" << endl;
 		cout << "1. Scan a directory. (requires root depending on the task)" << endl;
 		cout << "2. Empty recycle bin." << endl;
 		cout << "3. Delete app cache." << endl;
 		cout << "4. Delete app logs. (requires root)" << endl;
 		cout << "5. Exit" << endl;
-		clear_input_buffer();
 		cin >> choice;
 		//When something that is not a number is entered, it returns 0.
 		if (choice == 1) {
 			string path;
-			// File f("test", "test", "test");
-			// File f1("test", "test", "test");
-			// Directory d1("test", "test", "test");
-			// vector<FSItem*> fs;
-			// fs.push_back(&f);
-			// fs.push_back(&f1);
-			// fs.push_back(&d1);
-			// for (auto i : fs) {
-			// 	i->del();
-			// }
 			cout << "Enter the path: (/ for root, this might take a considerable amount of time. Root is also required to access protected parts of the filesystem.)" << endl;
 			cin >> path;
 			size_t found = path.find_last_of("/");
 			uintmax_t currentDirSize = directory_size(path);
 			string dirName = path.substr(found+1);
 			Directory currentDir(dirName, path, currentDirSize);
-			currentDir.print();
 			vector<unique_ptr<FSItem>> fs;
 			for (const auto & entry: filesystem::directory_iterator(path)) {
 				if (filesystem::is_directory(entry)){
 					//TODO: Use threading to improve the speed.
-					cout << entry.path().filename().string() << " " << entry.path() << endl;
 					uintmax_t s = directory_size(entry.path());
 					fs.push_back(make_unique<Directory>(entry.path().filename().string(), entry.path(), s));
 				}
 				else{
-					cout << entry.path().filename().string() <<  " " << entry.path() << endl;
 					fs.push_back(make_unique<File>(entry.path().filename().string(), entry.path(), filesystem::file_size(entry)));
 				}
 			}
 			currentDir.setContents(move(fs));
-			int index = 0;
+			//Dummy stuff.
+			Directory nextDir("null", "null", 0);
+			int index;
 			int scanChoice;
+			string nextDirPath = "";
 			while(true){
-				for (auto& i : currentDir.getContents()) {
-					cout << index << " ";
-					i->print();
-					index++;
+				if (nextDirPath == path){
+					nextDirPath = "";
 				}
-				cout << endl << endl << endl;
-				cout << "Contents of:" << currentDir.getPath() << endl;
-				cout << endl << endl << endl;
-				cout << "1. Sort by size (ascending)" << endl;
-				cout << "2. Sort by size (descending)" << endl;
-				cout << "3. Select an item." << endl;
-				cout << "4. Wipe folder." << endl;
-				cout << "5. Back." << endl;
+				index = 0;
+				clear();
+				//Doing it by path because a folder can be named null.
+				if (nextDirPath != ""){
+					size_t nextFound = path.find_last_of("/");
+					uintmax_t nextDirSize = directory_size(nextDirPath);
+					string nextDirName = path.substr(nextFound+1);
+					nextDir.setPath(nextDirPath);
+					nextDir.setName(nextDirName);
+					nextDir.setSize(nextDirSize);
+					vector<unique_ptr<FSItem>> nextFs;
+					for (const auto & entry: filesystem::directory_iterator(nextDirPath)) {
+						if (filesystem::is_directory(entry)){
+							//TODO: Use threading to improve the speed.
+							uintmax_t s = directory_size(entry.path());
+							nextFs.push_back(make_unique<Directory>(entry.path().filename().string(), entry.path(), s));
+						}
+						else{
+							nextFs.push_back(make_unique<File>(entry.path().filename().string(), entry.path(), filesystem::file_size(entry)));
+						}
+					}
+					nextDir.setContents(move(nextFs));
+					for (auto& i : nextDir.getContents()) {
+						cout << index << " ";
+						i->print();
+						index++;
+					}
+					cout << endl << endl << endl;
+					cout << "Contents of:" << nextDir.getPath() << endl;
+					cout << endl << endl << endl;
+					cout << "1. Sort by size (ascending)" << endl;
+					cout << "2. Sort by size (descending)" << endl;
+					cout << "3. Select an item." << endl;
+					cout << "4. Wipe folder." << endl;
+					cout << "5. Back." << endl;
+					cout << "6. Back to main menu." << endl;
+				}
+				else{
+					for (auto& i : currentDir.getContents()) {
+						cout << index << " ";
+						i->print();
+						index++;
+					}
+					cout << endl << endl << endl;
+					cout << "Contents of:" << currentDir.getPath() << endl;
+					cout << endl << endl << endl;
+					cout << "1. Sort by size (ascending)" << endl;
+					cout << "2. Sort by size (descending)" << endl;
+					cout << "3. Select an item." << endl;
+					cout << "4. Wipe folder." << endl;
+					cout << "5. Back to main menu." << endl;
+				}
 				cin >> scanChoice;
-				vector<unique_ptr<FSItem>>& dirContents = currentDir.getContents();
+				clear_input_buffer();
+				vector<unique_ptr<FSItem>>& dirContents = (nextDirPath == "") ? currentDir.getContents() : nextDir.getContents();
 				if (scanChoice == 1) {
 					sort(dirContents.begin(), dirContents.end(), [](unique_ptr<FSItem>& a, unique_ptr<FSItem>& b){ return a->getSize() < b->getSize(); });
 					clear();
@@ -94,8 +126,89 @@ int main() {
 					sort(dirContents.begin(), dirContents.end(), [](unique_ptr<FSItem>& a, unique_ptr<FSItem>& b){ return a->getSize() > b->getSize(); });
 					clear();
 				}
+				else if(scanChoice == 3) {
+					int itemIndex = 0;
+					while(true){
+						cout << "Select index of item you want to work with." << endl;
+						cin >> itemIndex;
+						clear_input_buffer();
+						if (itemIndex > dirContents.size()){
+							cout << "Please select a valid index." << endl;
+							continue;
+						}
+						else{
+							break;
+						}
+					}
+					unique_ptr<FSItem>& chosenItem = dirContents[itemIndex];
+					cout << endl << endl;
+					chosenItem->print();
+					cout << endl << endl;
+					int operation;
+					if (chosenItem->type() == "file"){
+						cout << "What would you like to do?" << endl;
+						cout << "1. Delete file" << endl;
+						cout << "2. Back" << endl;;
+						while(true){
+							cin >> operation;
+							clear_input_buffer();
+							if (operation == 1) {
+								chosenItem->del();
+								break;
+							}
+							else if (operation == 2) {
+								break;
+							}
+							else{
+								cout << "Invalid option!" << endl;
+								continue;
+							}
+						}
+					}
+					else if (chosenItem->type() == "dir"){
+						cout << "What would you like to do?" << endl;
+						cout << "1. Delete folder" << endl;
+						cout << "2. Scan folder" << endl;
+						cout << "3. Back" << endl;
+						while(true){
+							cin >> operation;
+							if (operation == 1) {
+								chosenItem->del();
+							}
+							else if (operation == 2) {
+								nextDirPath = chosenItem->getPath();
+								break;
+							}
+							else if (operation == 3) {
+								break;
+							}
+							else{
+								cout << "Invalid option!" << endl;
+								continue;
+							}
+						}
+					}
+				}
 				else if (scanChoice == 5) {
-					break;
+					if (nextDirPath != "") {
+						filesystem::path fp(nextDirPath);
+						nextDirPath = fp.parent_path().string();
+					}
+					else{
+						//Back to main menu
+						clear();
+						break;
+					}
+				}
+				else if (scanChoice == 6) {
+					if (nextDirPath == "") {
+						continue;
+					}
+					else{
+						//Back to main menu
+						clear();
+						break;
+					}
 				}
 				else {
 					//Clear the input buffer so that the programd oes not go into an infinite loop.
@@ -119,7 +232,9 @@ int main() {
 		}
 		else {
 			//Clear the input buffer so that the programd oes not go into an infinite loop.
+			clear();
 			clear_input_buffer();
+			cout << "Please select a valid option." << endl;
 		}
 	}
 	return 0;
@@ -162,5 +277,4 @@ void clear_input_buffer() {
 	//Clear the input buffer so that the programd oes not go into an infinite loop.
 	std::cin.clear();
     std::cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	cout << "Please select a valid option." << endl;
 }

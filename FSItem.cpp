@@ -42,3 +42,6 @@ void FSItem::setSize(uintmax_t size){
 	this->size = size;
 }
 
+string FSItem::type(void){
+	return "fsitem";
+}
