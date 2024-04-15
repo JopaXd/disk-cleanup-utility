@@ -11,17 +11,25 @@ Directory::Directory(string name, string path, uintmax_t size, vector<unique_ptr
 }
 
 void Directory::print(void) {
-    cout << "Name: " << name << ", Path: " << path << ", Size: " << size << " Contents: " << this->contents.size() << endl;
+	const char* suffixes[] = {"B", "KB", "MB", "GB", "TB"};
+	int suffixIndex = 0;
+		double finalSize = static_cast<double>(size);
+
+		while (finalSize >= 1024 && suffixIndex < 8) {
+			finalSize /= 1024;
+			suffixIndex++;
+	}
+	cout << "Name: " << name << ", Path: " << path << ", Size: " << finalSize << " " << suffixes[suffixIndex] << " Contents: " << contents.size() << endl;
 }
 
 ostream& operator<<(std::ostream& os, const Directory& item) {
-    os << "Name: " << item.name << ", Path: " << item.path << ", Size: " << item.size;
-    return os;
+	os << "Name: " << item.name << ", Path: " << item.path << ", Size: " << item.size;
+	return os;
 }
 
 int Directory::del(void){
 	try{
-		filesystem::remove_all(this->path);
+		filesystem::remove_all(path);
 		return 0;
 	}
 	catch (filesystem::filesystem_error &exc) {
@@ -30,11 +38,11 @@ int Directory::del(void){
 }
 
 void Directory::setContents(vector<unique_ptr<FSItem>> newContents) {
-    contents = move(newContents);
+	contents = move(newContents);
 }
 
 vector<unique_ptr<FSItem>>& Directory::getContents() {
-	return this->contents;
+	return contents;
 }
 
 string Directory::type(void){
