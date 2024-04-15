@@ -45,9 +45,21 @@ int main() {
 			vector<unique_ptr<FSItem>> fs;
 			for (const auto & entry: filesystem::directory_iterator(path)) {
 				if (filesystem::is_directory(entry)){
-					//TODO: Use threading to improve the speed.
+					//Quickly add child elements to child dirs (this is only to show the count of items in directory).
+					vector<unique_ptr<FSItem>> child_fs;
+					for (const auto & child_entry: filesystem::directory_iterator(entry.path())) {
+						if (filesystem::is_directory(child_entry)){
+							uintmax_t child_s = directory_size(child_entry.path());
+							child_fs.push_back(make_unique<Directory>(child_entry.path().filename().string(), child_entry.path(), child_s));
+						}
+						else{
+							child_fs.push_back(make_unique<File>(child_entry.path().filename().string(), child_entry.path(), filesystem::file_size(child_entry)));
+						}
+					}
 					uintmax_t s = directory_size(entry.path());
-					fs.push_back(make_unique<Directory>(entry.path().filename().string(), entry.path(), s));
+					Directory child_dir(entry.path().filename().string(), entry.path(), s);
+					child_dir.setContents(move(child_fs));
+					fs.push_back(std::make_unique<Directory>(std::move(child_dir)));
 				}
 				else{
 					fs.push_back(make_unique<File>(entry.path().filename().string(), entry.path(), filesystem::file_size(entry)));
@@ -76,9 +88,21 @@ int main() {
 					vector<unique_ptr<FSItem>> nextFs;
 					for (const auto & entry: filesystem::directory_iterator(nextDirPath)) {
 						if (filesystem::is_directory(entry)){
-							//TODO: Use threading to improve the speed.
+							//Quickly add child elements to child dirs (this is only to show the count of items in directory).
+							vector<unique_ptr<FSItem>> child_fs;
+							for (const auto & child_entry: filesystem::directory_iterator(entry.path())) {
+								if (filesystem::is_directory(child_entry)){
+									uintmax_t child_s = directory_size(child_entry.path());
+									child_fs.push_back(make_unique<Directory>(child_entry.path().filename().string(), child_entry.path(), child_s));
+								}
+								else{
+									child_fs.push_back(make_unique<File>(child_entry.path().filename().string(), child_entry.path(), filesystem::file_size(child_entry)));
+								}
+							}
 							uintmax_t s = directory_size(entry.path());
-							nextFs.push_back(make_unique<Directory>(entry.path().filename().string(), entry.path(), s));
+							Directory child_dir(entry.path().filename().string(), entry.path(), s);
+							child_dir.setContents(move(child_fs));
+							nextFs.push_back(std::make_unique<Directory>(std::move(child_dir)));
 						}
 						else{
 							nextFs.push_back(make_unique<File>(entry.path().filename().string(), entry.path(), filesystem::file_size(entry)));

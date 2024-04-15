@@ -11,7 +11,7 @@ Directory::Directory(string name, string path, uintmax_t size, vector<unique_ptr
 }
 
 void Directory::print(void) {
-    cout << "Name: " << name << ", Path: " << path << ", Size: " << size << endl;
+    cout << "Name: " << name << ", Path: " << path << ", Size: " << size << " Contents: " << this->contents.size() << endl;
 }
 
 ostream& operator<<(std::ostream& os, const Directory& item) {
