@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <limits>
 #include <filesystem>
+#include <string>
+#include <memory>
 #include "headers/Directory.h"
 #include "headers/File.h"
 #include "headers/FSItem.h"
@@ -44,11 +46,29 @@ int main() {
 			// }
 			cout << "Enter the path: (/ for root, this might take a considerable amount of time. Root is also required to access protected parts of the filesystem.)" << endl;
 			cin >> path;
+			size_t found = path.find_last_of("/");
+			uintmax_t currentDirSize = directory_size(path);
+			string dirName = path.substr(found+1);
+			Directory currentDir(dirName, path, currentDirSize);
+			currentDir.print();
+			vector<unique_ptr<FSItem>> fs;
 			for (const auto & entry: filesystem::directory_iterator(path)) {
 				if (filesystem::is_directory(entry)){
-					uintmax_t s = directory_size(entry.path());
-					cout << entry.path() << " " << s << endl;
+					//This will be calculated later.
+					cout << entry.path().filename().string() << " " << entry.path() << endl;
+					fs.push_back(make_unique<Directory>(entry.path().filename().string(), entry.path(), 0));
+					// uintmax_t s = directory_size(entry.path());
+					// cout << entry.path() << " " << s << endl;
+
 				}
+				else{
+					cout << entry.path().filename().string() <<  " " << entry.path() << endl;
+					fs.push_back(make_unique<File>(entry.path().filename().string(), entry.path(), filesystem::file_size(entry)));
+				}
+			}
+			for (auto& i : fs) {
+				i->print();
+				i->del();
 			}
 		}
 		else if (choice == 2) {

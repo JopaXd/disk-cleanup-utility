@@ -3,7 +3,7 @@
 
 using namespace std;
 
-FSItem::FSItem(string name, string size, string path){
+FSItem::FSItem(string name, string path, uintmax_t size){
 	this->name = name;
 	this->size = size;
 	this->path = path;

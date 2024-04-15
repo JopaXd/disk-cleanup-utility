@@ -9,10 +9,10 @@ using namespace std;
 class FSItem{
 protected:
 	string path;
-	string size;
+	uintmax_t size;
 	string name;
 public:
-	FSItem(string path, string size, string name);
+	FSItem(string path, string name, uintmax_t size=0);
 	virtual int del(void) = 0;
 	virtual void print(void);
 	friend std::ostream& operator<<(std::ostream& os, const FSItem& item);

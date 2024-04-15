@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Directory::Directory(string name, string size, string path, vector<FSItem*>) : FSItem(name, size, path){
+Directory::Directory(string name, string path, uintmax_t size, vector<FSItem*>) : FSItem(name, path, size){
 	this->files = files;
 }
 

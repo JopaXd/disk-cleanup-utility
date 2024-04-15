@@ -14,5 +14,5 @@ public:
 	int del(void);
 	void print(void);
 	friend std::ostream& operator<<(std::ostream& os, const Directory& item);
-	Directory(string name, string size, string path, vector<FSItem*> files = vector<FSItem*>());
+	Directory(string name, string path, uintmax_t size, vector<FSItem*> files = vector<FSItem*>());
 };

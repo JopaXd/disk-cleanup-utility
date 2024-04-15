@@ -3,7 +3,7 @@
 
 using namespace std;
 
-File::File(string name, string size, string path) : FSItem(name, size, path){
+File::File(string name, string path, uintmax_t size) : FSItem(name, path, size){
 	
 }
 
