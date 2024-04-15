@@ -214,6 +214,45 @@ int main() {
 						}
 					}
 				}
+				else if (scanChoice == 4) {
+					if (nextDirPath != "") {
+						//Deleting a path that the user went to.
+						int success = nextDir.del();
+						if (success == 0) {
+							cout << endl;
+							cout << "----------------" << endl;
+							cout << "Folder deleted successfully!" << endl;
+							cout << "----------------" << endl;
+							filesystem::path fp(nextDirPath);
+							nextDirPath = fp.parent_path().string();
+						}
+						else{
+							cout << endl;
+							cout << "----------------" << endl;
+							cout << "Error deleting folder!" << endl;
+							cout << "----------------" << endl;
+						}
+						
+					}
+					else{
+						//Deleting the initially scanned path.
+						int success = currentDir.del();
+						if (success == 0) {
+							cout << endl;
+							cout << "----------------" << endl;
+							cout << "Folder deleted successfully!" << endl;
+							cout << "----------------" << endl;
+						}
+						else{
+							cout << endl;
+							cout << "----------------" << endl;
+							cout << "Error deleting folder!" << endl;
+							cout << "----------------" << endl;
+						}
+						//Back to main menu
+						break;
+					}
+				}
 				else if (scanChoice == 5) {
 					if (nextDirPath != "") {
 						filesystem::path fp(nextDirPath);
