@@ -56,8 +56,8 @@ int main() {
 				if (filesystem::is_directory(entry)){
 					//This will be calculated later.
 					cout << entry.path().filename().string() << " " << entry.path() << endl;
-					fs.push_back(make_unique<Directory>(entry.path().filename().string(), entry.path(), 0));
-					// uintmax_t s = directory_size(entry.path());
+					uintmax_t s = directory_size(entry.path());
+					fs.push_back(make_unique<Directory>(entry.path().filename().string(), entry.path(), s));
 					// cout << entry.path() << " " << s << endl;
 
 				}
@@ -66,7 +66,9 @@ int main() {
 					fs.push_back(make_unique<File>(entry.path().filename().string(), entry.path(), filesystem::file_size(entry)));
 				}
 			}
-			for (auto& i : fs) {
+			currentDir.setContents(move(fs));
+			// vector<unique_ptr<FSItem>>& test = currentDir.getContents();
+			for (auto& i : currentDir.getContents()) {
 				i->print();
 				i->del();
 			}

@@ -16,4 +16,11 @@ public:
 	virtual int del(void) = 0;
 	virtual void print(void);
 	friend std::ostream& operator<<(std::ostream& os, const FSItem& item);
+	string getPath();
+	uintmax_t getSize();
+	string getName();
+	void setPath(string path);
+	void setSize(uintmax_t size);
+	void setName(string name);
+
 };

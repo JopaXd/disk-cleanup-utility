@@ -17,3 +17,28 @@ ostream& operator<<(std::ostream& os, const FSItem& item) {
     os << "Name: " << item.name << ", Path: " << item.path << ", Size: " << item.size;
     return os;
 }
+
+string FSItem::getName(){
+	return this->name;
+}
+
+void FSItem::setName(string name) {
+	this->name = name;
+}
+
+string FSItem::getPath(){
+	return this->path;
+}
+
+void FSItem::setPath(string path) {
+	this->path = path;
+}
+
+uintmax_t FSItem::getSize(){
+	return this->size;
+}
+
+void FSItem::setSize(uintmax_t size){
+	this->size = size;
+}
+
