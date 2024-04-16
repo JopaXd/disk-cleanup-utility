@@ -8,10 +8,8 @@
 #include "headers/Directory.h"
 #include "headers/File.h"
 #include "headers/FSItem.h"
+#include "headers/CleanupUtils.h"
 
-#define BIN_PATH " ~/.local/share/Trash/"
-#define APP_CACHE_PATH "~/.cache/"
-#define APP_LOGS "/var/log"
 #define DEBUG 1
 // #define APT_CACHE = "/var/cache/apt/archives";
 
@@ -306,13 +304,19 @@ int main() {
 		}
 		else if (choice == 2) {
 			// delete_dir_content(BIN_PATH);
-			cout << "Empty recycle bin" << endl;
+			int success = CleanupUtils::emptyRecycleBin();
+			if (success == 0){
+				cout << "Trash emptied";
+			}
+			else{
+				cout << "Error deleting trash;"
+			}
 		}
 		else if (choice == 3) {
-			cout << "Empty temp folder" << endl;
+			CleanupUtils::clearAppCache();
 		}
 		else if (choice == 4) {
-			cout << "Empty app logs." << endl;
+			CleanupUtils::clearAppLogs();
 		}
 		else if (choice == 5) {
 			cout << "Goodbye!" << endl;
@@ -330,12 +334,6 @@ int main() {
 
 void clear(){
 	system("clear");
-}
-
-void delete_dir_content(const filesystem::path& dir){
-	for (const auto& entry: filesystem::directory_iterator(dir)) {
-		filesystem::remove_all(entry.path());
-	}
 }
 
 uintmax_t directory_size(string path) {
