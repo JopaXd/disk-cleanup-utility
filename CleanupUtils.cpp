@@ -32,12 +32,22 @@ int CleanupUtils::emptyRecycleBin(void) {
 
 
 int CleanupUtils::clearAppCache(void) {
-	cout << "app cache" << endl;
+	try{
+		delete_dir_content(APP_CACHE_PATH):
+	}
+	catch(filesystem::filesystem_error &exc) {
+		return 1;
+	}
 	return 0;
 }
 
 
 int CleanupUtils::clearAppLogs(void) {
-	cout << "app logs" << endl;
+	try{
+		delete_dir_content(APP_LOGS):
+	}
+	catch(filesystem::filesystem_error &exc) {
+		return 1;
+	}
 	return 0;
 }
