@@ -1,1 +1,0 @@
-[INFO] Deleted /home/pavle/OOP_2/testing/test.py[INFO] Deleted /home/pavle/OOP_2/testing/testing_2

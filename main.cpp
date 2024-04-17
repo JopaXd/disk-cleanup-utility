@@ -20,6 +20,7 @@ void clear(void);
 uintmax_t directory_size(string path);
 void clear_input_buffer();
 int create_log_file();
+bool startsWith(const string& str, const string& prefix);
 
 int main() {
 	clear();
@@ -31,7 +32,8 @@ int main() {
 		cout << "2. Empty recycle bin." << endl;
 		cout << "3. Delete app cache." << endl;
 		cout << "4. Delete app logs. (requires root)" << endl;
-		cout << "5. Exit" << endl;
+		cout << "5. Show logs" << endl;
+		cout << "6. Exit" << endl;
 		cin >> choice;
 		//When something that is not a number is entered, it returns 0.
 		if (choice == 1) {
@@ -321,6 +323,114 @@ int main() {
 			CleanupUtils::clearAppLogs();
 		}
 		else if (choice == 5) {
+			clear();
+			int logChoice;
+			int showingInfo = 0;
+			int showingErrors = 0;
+			logChoice = 0;
+			ifstream log_file("./logs.txt");
+			string line;
+			vector<string> logs;
+			while (getline(log_file, line)) {
+				cout << line << endl;
+				logs.push_back(line);
+			}
+			log_file.close();
+			while (true) {
+				cout << endl << endl << endl;
+				cout << "What would you like to do?" << endl;
+				if (!showingInfo && !showingErrors){
+					cout << "1. Show only errors" << endl;
+					cout << "2. Show only info" << endl;
+					cout << "3. Clear logs" << endl;
+					cout << "4. Back" << endl;
+				}
+				else if (showingInfo){
+					cout << "1. Show only errors" << endl;
+					cout << "2. Show all logs" << endl;
+					cout << "3. Clear logs" << endl;
+					cout << "4. Back";
+				}
+				else if (showingErrors) {
+					cout << "1. Show only info" << endl;
+					cout << "2. Show all logs" << endl;
+					cout << "3. Clear logs" << endl;
+					cout << "4. Back";
+				}
+				cin >> logChoice;
+				clear_input_buffer();
+				if (logChoice == 1) {
+					clear();
+					if (!showingInfo && !showingErrors){
+						for (string log : logs) {
+							if (startsWith(log, "[ERROR]")){
+								cout << log << endl;
+							}
+						}
+						showingErrors = 1;
+						showingInfo = 0;
+						continue;
+					}
+					else if (showingInfo){
+						clear();
+						for (string log : logs) {
+							if (startsWith(log, "[ERROR]")){
+								cout << log << endl;
+							}
+						}
+						showingErrors = 1;
+						showingInfo = 0;
+						continue;
+					}
+					else if(showingErrors){
+						clear();
+						for (string log : logs) {
+							if (startsWith(log, "[INFO]")){
+								cout << log << endl;
+							}
+						}
+						showingErrors = 0;
+						showingInfo = 1;
+						continue;
+					}
+				}
+				else if (logChoice == 2) {
+					clear();
+					if (!showingInfo && !showingErrors){
+						for (string log : logs) {
+							if (startsWith(log, "[INFO]")){
+								cout << log << endl;
+							}
+						}
+						showingErrors = 0;
+						showingInfo = 1;
+						continue;
+					}
+					else if (showingInfo || showingErrors){
+						clear();
+						for (string log : logs) {
+							cout << log << endl;
+						}
+						showingErrors = 0;
+						showingInfo = 0;
+						continue;
+					}
+				}
+				else if (logChoice == 3) {
+					clear();
+					ofstream ofs;
+					ofs.open("./logs.txt", ofstream::out | ofstream::trunc);
+					ofs.close();
+					cout << "Cleared." << endl; 
+					break;
+				}
+				else if (logChoice == 4) {
+					clear();
+					break;
+				}
+			}
+		}
+		else if (choice == 6) {
 			cout << "Goodbye!" << endl;
 			break;
 		}
@@ -339,28 +449,28 @@ void clear(){
 }
 
 uintmax_t directory_size(string path) {
-    uintmax_t size = 0;
-    for (const auto& entry : filesystem::recursive_directory_iterator(path)) {
-        if (!filesystem::is_directory(entry)) {
-        	try{
-    	        size += filesystem::file_size(entry);
-        	}
-        	//Failed to read for various reasons... (Permissions, fs errors, etc...)
-        	catch (filesystem::filesystem_error &exc){
-        		if (DEBUG){
-	        		cout << "ERROR!" << " " << exc.what() << endl;
-        		}
-        		continue;
-        	}
-        }
-    }
-    return size;
+	uintmax_t size = 0;
+	for (const auto& entry : filesystem::recursive_directory_iterator(path)) {
+		if (!filesystem::is_directory(entry)) {
+			try{
+				size += filesystem::file_size(entry);
+			}
+			//Failed to read for various reasons... (Permissions, fs errors, etc...)
+			catch (filesystem::filesystem_error &exc){
+				if (DEBUG){
+					cout << "ERROR!" << " " << exc.what() << endl;
+				}
+				continue;
+			}
+		}
+	}
+	return size;
 }
 
 void clear_input_buffer() {
 	//Clear the input buffer so that the programd oes not go into an infinite loop.
 	std::cin.clear();
-    std::cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	std::cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
 //This checks if the file exists, and if not, creates one.
@@ -373,4 +483,8 @@ int create_log_file() {
 		}
 	}
 	return 0;
+}
+
+bool startsWith(const string& str, const string& prefix) {
+    return str.find(prefix) == 0;
 }
