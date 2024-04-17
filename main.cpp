@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <algorithm>
+#include <fstream>
 #include "headers/Directory.h"
 #include "headers/File.h"
 #include "headers/FSItem.h"
@@ -16,12 +17,13 @@
 using namespace std;
 
 void clear(void);
-void delete_dir_content(const filesystem::path& dir);
 uintmax_t directory_size(string path);
 void clear_input_buffer();
+int create_log_file();
 
 int main() {
 	clear();
+	create_log_file();
 	int choice;
 	while (true){
 		cout << "*** FS CleanUp Utility***" << endl;
@@ -181,6 +183,7 @@ int main() {
 									cout << "----------------" << endl;
 									cout << "File deleted successfully!" << endl;
 									cout << "----------------" << endl;
+
 								}
 								else{
 									cout << endl;
@@ -303,13 +306,12 @@ int main() {
 			}
 		}
 		else if (choice == 2) {
-			// delete_dir_content(BIN_PATH);
 			int success = CleanupUtils::emptyRecycleBin();
 			if (success == 0){
 				cout << "Trash emptied";
 			}
 			else{
-				cout << "Error deleting trash;"
+				cout << "Error deleting trash;";
 			}
 		}
 		else if (choice == 3) {
@@ -359,4 +361,16 @@ void clear_input_buffer() {
 	//Clear the input buffer so that the programd oes not go into an infinite loop.
 	std::cin.clear();
     std::cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+//This checks if the file exists, and if not, creates one.
+int create_log_file() {
+	if (!filesystem::exists("./logs.txt")){
+		fstream file;
+		file.open("./logs.txt", ios::out);
+		if (!file){
+			return 1;
+		}
+	}
+	return 0;
 }

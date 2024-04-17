@@ -1,6 +1,9 @@
 #include <iostream>
 #include <filesystem>
 #include "headers/File.h"
+#include "headers/Log.h"
+#include "headers/InfoLog.h"
+#include "headers/ErrorLog.h"
 
 using namespace std;
 
@@ -20,9 +23,13 @@ ostream& operator<<(std::ostream& os, const File& item) {
 int File::del(void){
 	try{
 		filesystem::remove(this->path);
+		InfoLog il("Deleted " + path);
+		il.writeLog();
 		return 0;
 	}
 	catch (filesystem::filesystem_error &exc) {
+		ErrorLog el("Error when trying to delete " + path);
+		el.writeLog();
 		return 1;
 	}
 }

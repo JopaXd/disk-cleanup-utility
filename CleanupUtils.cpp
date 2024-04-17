@@ -33,7 +33,7 @@ int CleanupUtils::emptyRecycleBin(void) {
 
 int CleanupUtils::clearAppCache(void) {
 	try{
-		delete_dir_content(APP_CACHE_PATH):
+		delete_dir_content(APP_CACHE_PATH);
 	}
 	catch(filesystem::filesystem_error &exc) {
 		return 1;
@@ -44,7 +44,7 @@ int CleanupUtils::clearAppCache(void) {
 
 int CleanupUtils::clearAppLogs(void) {
 	try{
-		delete_dir_content(APP_LOGS):
+		delete_dir_content(APP_LOGS);
 	}
 	catch(filesystem::filesystem_error &exc) {
 		return 1;
