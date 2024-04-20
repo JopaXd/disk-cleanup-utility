@@ -61,7 +61,7 @@ int main() {
 					uintmax_t s = directory_size(entry.path());
 					Directory child_dir(entry.path().filename().string(), entry.path(), s);
 					child_dir.setContents(move(child_fs));
-					fs.push_back(std::make_unique<Directory>(std::move(child_dir)));
+					fs.push_back(make_unique<Directory>(move(child_dir)));
 				}
 				else{
 					fs.push_back(make_unique<File>(entry.path().filename().string(), entry.path(), filesystem::file_size(entry)));
@@ -104,7 +104,7 @@ int main() {
 							uintmax_t s = directory_size(entry.path());
 							Directory child_dir(entry.path().filename().string(), entry.path(), s);
 							child_dir.setContents(move(child_fs));
-							nextFs.push_back(std::make_unique<Directory>(std::move(child_dir)));
+							nextFs.push_back(make_unique<Directory>(move(child_dir)));
 						}
 						else{
 							nextFs.push_back(make_unique<File>(entry.path().filename().string(), entry.path(), filesystem::file_size(entry)));
@@ -328,6 +328,7 @@ int main() {
 			int showingInfo = 0;
 			int showingErrors = 0;
 			logChoice = 0;
+			vector<string> filtered_logs;
 			ifstream log_file("./logs.txt");
 			string line;
 			vector<string> logs;
@@ -359,35 +360,43 @@ int main() {
 				}
 				cin >> logChoice;
 				clear_input_buffer();
+				filtered_logs.clear();
 				if (logChoice == 1) {
 					clear();
 					if (!showingInfo && !showingErrors){
-						for (string log : logs) {
-							if (startsWith(log, "[ERROR]")){
-								cout << log << endl;
-							}
+						copy_if(logs.begin(), logs.end(), back_inserter(filtered_logs),
+					 		[](const string& word) {
+								string prefix = "[ERROR]"; 
+								return word.compare(0, prefix.size(), prefix) == 0;
+					 		});
+						for (string log : filtered_logs) {
+							cout << log << endl;
 						}
 						showingErrors = 1;
 						showingInfo = 0;
 						continue;
 					}
 					else if (showingInfo){
-						clear();
-						for (string log : logs) {
-							if (startsWith(log, "[ERROR]")){
-								cout << log << endl;
-							}
+						copy_if(logs.begin(), logs.end(), back_inserter(filtered_logs),
+					 		[](const string& word) {
+								string prefix = "[ERROR]"; 
+								return word.compare(0, prefix.size(), prefix) == 0;
+					 		});
+						for (string log : filtered_logs) {
+							cout << log << endl;
 						}
 						showingErrors = 1;
 						showingInfo = 0;
 						continue;
 					}
 					else if(showingErrors){
-						clear();
-						for (string log : logs) {
-							if (startsWith(log, "[INFO]")){
-								cout << log << endl;
-							}
+						copy_if(logs.begin(), logs.end(), back_inserter(filtered_logs),
+					 		[](const string& word) {
+								string prefix = "[INFO]"; 
+								return word.compare(0, prefix.size(), prefix) == 0;
+					 		});
+						for (string log : filtered_logs) {
+							cout << log << endl;
 						}
 						showingErrors = 0;
 						showingInfo = 1;
@@ -397,17 +406,19 @@ int main() {
 				else if (logChoice == 2) {
 					clear();
 					if (!showingInfo && !showingErrors){
-						for (string log : logs) {
-							if (startsWith(log, "[INFO]")){
-								cout << log << endl;
-							}
+						copy_if(logs.begin(), logs.end(), back_inserter(filtered_logs),
+					 		[](const string& word) {
+								string prefix = "[INFO]"; 
+								return word.compare(0, prefix.size(), prefix) == 0;
+					 		});
+						for (string log : filtered_logs) {
+							cout << log << endl;
 						}
 						showingErrors = 0;
 						showingInfo = 1;
 						continue;
 					}
 					else if (showingInfo || showingErrors){
-						clear();
 						for (string log : logs) {
 							cout << log << endl;
 						}
@@ -469,8 +480,8 @@ uintmax_t directory_size(string path) {
 
 void clear_input_buffer() {
 	//Clear the input buffer so that the programd oes not go into an infinite loop.
-	std::cin.clear();
-	std::cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	cin.clear();
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
 //This checks if the file exists, and if not, creates one.
@@ -486,5 +497,5 @@ int create_log_file() {
 }
 
 bool startsWith(const string& str, const string& prefix) {
-    return str.find(prefix) == 0;
+	return str.find(prefix) == 0;
 }
