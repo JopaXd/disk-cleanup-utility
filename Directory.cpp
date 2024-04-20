@@ -55,3 +55,11 @@ vector<unique_ptr<FSItem>>& Directory::getContents() {
 string Directory::type(void){
 	return "dir";
 }
+
+Directory* Directory::getParent(void) {
+	return parent;
+}
+
+void Directory::setParent(Directory* newParent){
+	parent = newParent;
+}
