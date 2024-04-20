@@ -400,7 +400,7 @@ void clear(){
 	system("clear");
 }
 
-Directory loadDirectories(string path);{
+Directory loadDirectories(string path){
 	size_t found = path.find_last_of("/");
 	uintmax_t currentDirSize = directory_size(path);
 	string dirName = path.substr(found+1);
