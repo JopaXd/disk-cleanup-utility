@@ -12,7 +12,15 @@ File::File(string name, string path, uintmax_t size) : FSItem(name, path, size){
 }
 
 void File::print(void) {
-    cout << "Name: " << name << ", Path: " << path << ", Size: " << size << endl;
+	const char* suffixes[] = {"B", "KB", "MB", "GB", "TB"};
+	int suffixIndex = 0;
+		double finalSize = static_cast<double>(size);
+
+		while (finalSize >= 1024 && suffixIndex < 5) {
+			finalSize /= 1024;
+			suffixIndex++;
+	}
+    cout << "Name: " << name << ", Path: " << path << ", Size: " << finalSize << " " << suffixes[suffixIndex] << endl;
 }
 
 ostream& operator<<(std::ostream& os, const File& item) {

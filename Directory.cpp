@@ -18,7 +18,7 @@ void Directory::print(void) {
 	int suffixIndex = 0;
 		double finalSize = static_cast<double>(size);
 
-		while (finalSize >= 1024 && suffixIndex < 8) {
+		while (finalSize >= 1024 && suffixIndex < 5) {
 			finalSize /= 1024;
 			suffixIndex++;
 	}
@@ -57,9 +57,6 @@ string Directory::type(void){
 }
 
 Directory* Directory::getParent(void) {
-	if (parent == nullptr){
-		cout << "AAAAA" << endl;
-	}
 	return parent;
 }
 
