@@ -21,7 +21,7 @@ uintmax_t directory_size(string path);
 void clear_input_buffer();
 int create_log_file();
 bool startsWith(const string& str, const string& prefix);
-Directory loadDirectories(string path);
+unique_ptr<Directory> loadDirectories(const string& path, Directory* parentDir = nullptr);
 
 int main() {
 	clear();
@@ -45,13 +45,11 @@ int main() {
 			cout << "Enter the path: (/ for root, this might take a considerable amount of time. Root is also required to access protected parts of the filesystem.)" << endl;
 			cin >> path;
 			clear_input_buffer();
-			Directory rootDir = loadDirectories(path);
-			Directory* prevDir = nullptr;
-			Directory* currentDir = nullptr;
-			
+			unique_ptr<Directory> rootDir = loadDirectories(path);
+			Directory* currentDir = nullptr;		
 			while (true) {
 				if (currentDir == nullptr){
-					currentDir = &rootDir;
+					currentDir = rootDir.get();
 				}
 				vector<unique_ptr<FSItem>>& dirContents = currentDir->getContents();
 				index = 0;
@@ -60,7 +58,7 @@ int main() {
 					i->print();
 					index++;
 				}
-				if (prevDir == nullptr){
+				if (currentDir->getParent() == nullptr){
 					cout << endl << endl << endl;
 					cout << "Contents of:" << currentDir->getPath() << endl;
 					cout << endl << endl << endl;
@@ -176,7 +174,6 @@ int main() {
 								break;
 							}
 							else if (operation == 2) {
-								prevDir = currentDir;
 								currentDir = dynamic_cast<Directory*>(currentDir->getContents()[itemIndex].get());
 								break;
 							}
@@ -188,15 +185,14 @@ int main() {
 				}
 				else if (scanChoice == 4) {
 					clear();
-					if (prevDir != nullptr) {
+					if (currentDir->getParent() != nullptr) {
 						int success = currentDir->del();
 						if (success == 0) {
 							cout << endl;
 							cout << "----------------" << endl;
 							cout << "Folder deleted successfully!" << endl;
 							cout << "----------------" << endl;
-							currentDir = prevDir;
-							prevDir = prevDir->getParent();
+							currentDir = currentDir->getParent();
 						}
 						else{
 							cout << endl;
@@ -226,18 +222,17 @@ int main() {
 					}
 				}
 				else if (scanChoice == 5) {
-					if (prevDir == nullptr){
+					if (currentDir->getParent() == nullptr){
 						//Back to main menu.
 						clear();
 						break;
 					}
 					else{
-						currentDir = prevDir;
-						prevDir = prevDir->getParent();
+						currentDir = currentDir->getParent();
 					}
 				}
 				else if (scanChoice == 6) {
-					if (prevDir == nullptr) {
+					if (currentDir->getParent() == nullptr) {
 						continue;
 					}
 					else{
@@ -400,25 +395,26 @@ void clear(){
 	system("clear");
 }
 
-Directory loadDirectories(string path){
-	size_t found = path.find_last_of("/");
-	uintmax_t currentDirSize = directory_size(path);
-	string dirName = path.substr(found+1);
-	Directory dir(dirName, path, currentDirSize);
-	vector<unique_ptr<FSItem>> fs;
-	for (const auto& entry : filesystem::directory_iterator(path)) {
-		if (filesystem::is_directory(entry)) {
-			uintmax_t subdir_size = directory_size(entry.path());
-			unique_ptr<Directory> subdir = make_unique<Directory>(entry.path().filename().string(), entry.path().string(), subdir_size);
-			subdir->setParent(&dir);
-			*subdir = loadDirectories(entry.path().string());
-			fs.push_back(move(subdir));
-		} else {
-			fs.push_back(make_unique<File>(entry.path().filename().string(), entry.path().string(), filesystem::file_size(entry)));
-		}
-	}
-	dir.setContents(move(fs));
-	return dir;
+unique_ptr<Directory> loadDirectories(const string& path, Directory* parentDir) {
+    size_t found = path.find_last_of("/");
+    uintmax_t currentDirSize = directory_size(path);
+    string dirName = path.substr(found + 1);
+    unique_ptr<Directory> dir = make_unique<Directory>(dirName, path, currentDirSize);
+    dir->setParent(parentDir); // Set the parent directory
+
+    vector<unique_ptr<FSItem>> fs;
+    for (const auto& entry : filesystem::directory_iterator(path)) {
+        if (filesystem::is_directory(entry)) {
+            uintmax_t subdir_size = directory_size(entry.path());
+            unique_ptr<Directory> subdir = make_unique<Directory>(entry.path().filename().string(), entry.path().string(), subdir_size);
+            subdir = loadDirectories(entry.path().string(), dir.get()); // Pass dir as the parent directory
+            fs.push_back(move(subdir));
+        } else {
+            fs.push_back(make_unique<File>(entry.path().filename().string(), entry.path().string(), filesystem::file_size(entry)));
+        }
+    }
+    dir->setContents(move(fs));
+    return dir;
 }
 
 uintmax_t directory_size(string path) {

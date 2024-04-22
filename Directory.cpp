@@ -57,6 +57,9 @@ string Directory::type(void){
 }
 
 Directory* Directory::getParent(void) {
+	if (parent == nullptr){
+		cout << "AAAAA" << endl;
+	}
 	return parent;
 }
 
