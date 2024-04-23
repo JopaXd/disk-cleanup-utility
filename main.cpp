@@ -43,8 +43,19 @@ int main() {
 			int index = 0;
 			int scanChoice = 0;
 			cout << "Enter the path: (/ for root, this might take a considerable amount of time. Root is also required to access protected parts of the filesystem.)" << endl;
-			cin >> path;
-			clear_input_buffer();
+			while (true){
+				cin >> path;
+				clear_input_buffer();				
+				if (!filesystem::exists(path)){
+					cout << "The path you entered does not exist!" << endl;
+				}
+				else if (filesystem::is_regular_file(path)){
+					cout << "This is a file, not a directory!" << endl;
+				}
+				else{
+					break;
+				}
+			}
 			unique_ptr<Directory> rootDir = loadDirectories(path);
 			Directory* currentDir = nullptr;		
 			while (true) {
