@@ -10,7 +10,7 @@
 
 using namespace std;
 
-Directory::Directory(string name, string path, uintmax_t size, vector<unique_ptr<FSItem>> contents) : FSItem(name, path, size), contents(std::move(contents)){
+Directory::Directory(string name, string path, uintmax_t size, vector<unique_ptr<FSItem>> contents) : FSItem(name, path, size), contents(move(contents)){
 }
 
 void Directory::print(void) {
@@ -25,7 +25,7 @@ void Directory::print(void) {
 	cout << "Name: " << name << ", Path: " << path << ", Size: " << finalSize << " " << suffixes[suffixIndex] << " Contents: " << contents.size() << endl;
 }
 
-ostream& operator<<(std::ostream& os, const Directory& item) {
+ostream& operator<<(ostream& os, const Directory& item) {
 	os << "Name: " << item.name << ", Path: " << item.path << ", Size: " << item.size;
 	return os;
 }

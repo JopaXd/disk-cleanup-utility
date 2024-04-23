@@ -9,7 +9,7 @@ InfoLog::InfoLog(string text) : Log(text) {
 
 void InfoLog::writeLog(){
 	ofstream outfile;
-	outfile.open(logFile, std::ios_base::app);
+	outfile.open(logFile, ios_base::app);
 	outfile << "[INFO] " <<  text << endl; 
 	outfile.close();
 }

@@ -15,7 +15,7 @@ private:
 public:
 	int del(void);
 	void print(void);
-	friend std::ostream& operator<<(std::ostream& os, const Directory& item);
+	friend ostream& operator<<(ostream& os, const Directory& item);
 	void setContents(vector<unique_ptr<FSItem>> newContents);
 	string type(void);
 	vector<unique_ptr<FSItem>>& getContents();

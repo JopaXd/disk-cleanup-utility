@@ -10,7 +10,7 @@ Log::Log(string text) {
 
 void Log::writeLog(){
 	ofstream outfile;
-	outfile.open(logFile, std::ios_base::app);
+	outfile.open(logFile, ios_base::app);
 	outfile << "[LOG] " <<  text << endl; 
 	outfile.close();
 }

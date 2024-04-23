@@ -13,7 +13,7 @@ void FSItem::print(void) {
     cout << "Name: " << name << ", Path: " << path << ", Size: " << size << endl;
 }
 
-ostream& operator<<(std::ostream& os, const FSItem& item) {
+ostream& operator<<(ostream& os, const FSItem& item) {
     os << "Name: " << item.name << ", Path: " << item.path << ", Size: " << item.size;
     return os;
 }

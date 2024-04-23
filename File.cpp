@@ -23,7 +23,7 @@ void File::print(void) {
     cout << "Name: " << name << ", Path: " << path << ", Size: " << finalSize << " " << suffixes[suffixIndex] << endl;
 }
 
-ostream& operator<<(std::ostream& os, const File& item) {
+ostream& operator<<(ostream& os, const File& item) {
     os << "Name: " << item.name << ", Path: " << item.path << ", Size: " << item.size;
     return os;
 }

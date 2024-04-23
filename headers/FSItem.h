@@ -15,7 +15,7 @@ public:
 	FSItem(string path, string name, uintmax_t size=0);
 	virtual int del(void) = 0;
 	virtual void print(void);
-	friend std::ostream& operator<<(std::ostream& os, const FSItem& item);
+	friend ostream& operator<<(ostream& os, const FSItem& item);
 	bool operator<(const FSItem& fsi);
 	bool operator>(const FSItem& fsi);
 	string getPath();
