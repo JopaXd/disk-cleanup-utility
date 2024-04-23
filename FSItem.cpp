@@ -18,6 +18,14 @@ ostream& operator<<(std::ostream& os, const FSItem& item) {
     return os;
 }
 
+bool FSItem::operator<(const FSItem& fsi) {
+	return size < fsi.getSize();
+}
+
+bool FSItem::operator>(const FSItem& fsi) {
+	return size > fsi.getSize();
+}
+
 string FSItem::getName(){
 	return this->name;
 }
@@ -34,7 +42,7 @@ void FSItem::setPath(string path) {
 	this->path = path;
 }
 
-uintmax_t FSItem::getSize(){
+uintmax_t FSItem::getSize() const{
 	return this->size;
 }
 

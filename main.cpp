@@ -95,11 +95,11 @@ int main() {
 				clear_input_buffer();
 
 				if (scanChoice == 1) {
-					sort(dirContents.begin(), dirContents.end(), [](unique_ptr<FSItem>& a, unique_ptr<FSItem>& b){ return a->getSize() < b->getSize(); });
+					sort(dirContents.begin(), dirContents.end(), [](unique_ptr<FSItem>& a, unique_ptr<FSItem>& b){ return *a < *b; });
 					clear();
 				}
 				else if (scanChoice == 2) {
-					sort(dirContents.begin(), dirContents.end(), [](unique_ptr<FSItem>& a, unique_ptr<FSItem>& b){ return a->getSize() > b->getSize(); });
+					sort(dirContents.begin(), dirContents.end(), [](unique_ptr<FSItem>& a, unique_ptr<FSItem>& b){ return *a > *b; });
 					clear();
 				}
 				else if(scanChoice == 3) {
