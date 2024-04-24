@@ -173,7 +173,7 @@ int main() {
 									cout << "----------------" << endl;
 									cout << "Folder deleted successfully!" << endl;
 									cout << "----------------" << endl;
-									vector<unique_ptr<FSItem>>& dirContents = currentDir->getContents();
+									int itemIndex = 0;
 									dirContents.erase(dirContents.begin() + itemIndex);
 								}
 								else{
@@ -203,6 +203,8 @@ int main() {
 							cout << "----------------" << endl;
 							cout << "Folder deleted successfully!" << endl;
 							cout << "----------------" << endl;
+							vector<unique_ptr<FSItem>>& parentContents = currentDir->getParent()->getContents();
+							parentContents.erase(std::remove_if(parentContents.begin(), parentContents.end(), [&](auto const& fsi){ return fsi->getPath() == currentDir->getPath(); }), parentContents.end());
 							currentDir = currentDir->getParent();
 						}
 						else{
